@@ -11,7 +11,7 @@ class ProductEntity
 
     private float $price;
 
-    private string $tarifs;
+    private ?string $tarifs;
 
     public function __construct(array $product)
     {
