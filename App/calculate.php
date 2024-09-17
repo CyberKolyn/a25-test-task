@@ -1,50 +1,52 @@
 <?php
 namespace App;
-require_once 'Infrastructure/sdbh.php'; use sdbh\sdbh; 
+use App\Application\CalculateService;
+use App\Domain\Products\ProductRepository;
+use App\Presentation\Products\CalculatePresenter;
+use App\Presentation\IPresenter;
+
+require_once 'Domain/Products/ProductRepository.php';
+require_once 'Presentation/Products/CalculatePresenter.php';
+require_once 'Presentation/IPresenter.php';
+require_once 'Application/CalculateService.php';
 
 class Calculate
 {
-    public function calculate1()
+    private ProductRepository $productRepository;
+
+    private IPresenter $calculatePresenter;
+
+    public function __construct()
     {
-        $dbh = new sdbh();
-        $days = isset($_POST['days']) ? $_POST['days'] : 0;
-        $product_id = isset($_POST['product']) ? $_POST['product'] : 0;
-        $selected_services = isset($_POST['services']) ? $_POST['services'] : [];
-        $product = $dbh->make_query("SELECT * FROM a25_products WHERE ID = $product_id");
-        if ($product) {
-            $product = $product[0];
-            $price = $product['PRICE'];
-            $tarif = $product['TARIFF'];
-        } else {
-            echo "Ошибка, товар не найден!";
+        $this->productRepository = new ProductRepository();
+        $this->calculatePresenter = new CalculatePresenter();
+    }
+
+    public function calculate($request)
+    {
+
+        $days = $request['days'] ?? 0;
+        $product_id = $request['product'] ?? 0;
+        $selected_services = $request['services'] ?? [];
+
+        $product = $this->productRepository->find_product_by_id($product_id);
+
+        if (!$product) {
+            $this->calculatePresenter
+                ->set_error('Ошибка, товар не найден!')
+                ->present();
             return;
         }
 
-        $tarifs = unserialize($tarif);
-        if (is_array($tarifs)) {
-            $product_price = $price;
-            foreach ($tarifs as $day_count => $tarif_price) {
-                if ($days >= $day_count) {
-                    $product_price = $tarif_price;
-                }
-            }
-            $total_price = $product_price * $days;
-        }else{
-            $total_price = $price * $days;
-        }
+        $total_sum = (new CalculateService($product, (int) $days, $selected_services))->calculate();
 
-        $services_price = 0;
-        foreach ($selected_services as $service) {
-            $services_price += (float)$service * $days;
-        }
-
-        $total_price += $services_price;
-
-        echo $total_price;
+        $this->calculatePresenter
+            ->set_total_sum($total_sum)
+            ->present();
     }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $instance = new Calculate();
-    $instance->calculate1();
+    $instance->calculate($_POST);
 }
