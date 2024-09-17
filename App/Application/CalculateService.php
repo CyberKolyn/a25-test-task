@@ -51,7 +51,9 @@ class CalculateService
 
     private function find_tarif() : int
     {
-        $tarifs = array_filter($this->product->get_tarifs(), function ($price, $day_count) {
+        $tarifs = $this->product->get_tarifs();
+        ksort($tarifs);
+        $tarifs = array_filter($tarifs, function ($price, $day_count) {
             return $this->days >= $day_count;
         }, ARRAY_FILTER_USE_BOTH);
 
