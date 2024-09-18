@@ -76,7 +76,7 @@ $settingRepository = new SettingRepository();
                         <button type="submit" class="btn btn-primary">Рассчитать</button>
                     </form>
 
-                    <div class="d-flex text-center">
+                    <div class="d-flex align-items-center">
                         <h5>Итоговая стоимость: <span id="total-price"></span></h5>
                         <button
                                 id="info-price"

@@ -2,11 +2,11 @@
 namespace App;
 use App\Application\CalculateService;
 use App\Domain\Products\ProductRepository;
-use App\Presentation\Products\CalculatePresenter;
+use App\Presentation\CalculatePresenter;
 use App\Presentation\IPresenter;
 
 require_once 'Domain/Products/ProductRepository.php';
-require_once 'Presentation/Products/CalculatePresenter.php';
+require_once 'Presentation/CalculatePresenter.php';
 require_once 'Presentation/IPresenter.php';
 require_once 'Application/CalculateService.php';
 

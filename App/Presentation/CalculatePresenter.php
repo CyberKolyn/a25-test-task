@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Presentation\Products;
+namespace App\Presentation;
 
-use App\Presentation\IPresenter;
-require __DIR__ . '/../IPresenter.php';
+require 'IPresenter.php';
 class CalculatePresenter implements IPresenter
 {
 

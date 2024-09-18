@@ -2,9 +2,7 @@
 
 namespace App\Domain;
 
-require_once 'DB.php';
-
-use DB;
+require_once 'DB.php'; use App\Domain\DB;
 
 class Repository
 {

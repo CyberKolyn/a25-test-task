@@ -1,8 +1,8 @@
 <?php
 
-use sdbh\sdbh;
+namespace App\Domain;
 
-require_once __DIR__ . '/../Infrastructure/sdbh.php';
+require_once __DIR__ . '/../Infrastructure/sdbh.php'; use sdbh\sdbh;
 
 class DB {
 
