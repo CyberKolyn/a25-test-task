@@ -57,14 +57,22 @@ class Calculate
         $endDate = strtotime(trim($endDate));
 
         if (!$startDate || !$endDate) {
-            return 0;
+            $this->calculatePresenter
+                ->setError('Ошибка, неправильный формат даты!')
+                ->present();
+            http_response_code(400);
+            exit;
         }
 
         $startDate = date_create('@'.$startDate);
         $endDate = date_create('@'.$endDate);
 
         if ($startDate > $endDate) {
-            return 0;
+            $this->calculatePresenter
+                ->setError('Начальная дата проката больше конечной даты!')
+                ->present();
+            http_response_code(400);
+            exit;
         }
 
         $interval = date_diff($startDate, $endDate);

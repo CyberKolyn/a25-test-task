@@ -44,10 +44,10 @@ $settingRepository = new SettingRepository();
                     </select>
                 <?php } ?>
 
-                <label class="form-label" for="startDate">Начало проката</label>
+                <label class="form-label" for="startDate">Дата начала проката</label>
                 <input type="text" class="form-control" name="startDate" id="startDate" autocomplete="off">
 
-                <label class="form-label" for="endDate">Конец проката</label>
+                <label class="form-label" for="endDate">Дата окончания проката</label>
                 <input type="text" class="form-control" name="endDate" id="endDate" autocomplete="off">
 
                 <?php $settingServices = $settingRepository->findSettingServices();
@@ -91,37 +91,6 @@ $settingRepository = new SettingRepository();
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
-<script>
-    $(document).ready(function() {
-        $("#form").submit(function(event) {
-            event.preventDefault();
-
-            $.ajax({
-                url: 'App/calculate.php',
-                type: 'POST',
-                data: $(this).serialize(),
-                success: function(response) {
-                    const data = JSON.parse(response);
-                    $("#total-price").text(data.total_sum);
-
-                    const infoTooltip = $("#info-price")
-                    infoTooltip.attr('title', data.calculation_info).tooltip('dispose').tooltip();
-                    infoTooltip.removeAttr('hidden');
-                },
-                error: function() {
-                    $("#total-price").text('Ошибка при расчете');
-                }
-            });
-        });
-
-        const options = {
-            dateFormat: "dd.mm.yy",
-        };
-
-        $("#startDate").datepicker(options);
-        $("#endDate").datepicker(options);
-    });
-
-</script>
+<script src="assets/js/homepage.js"></script>
 </body>
 </html>
