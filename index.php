@@ -9,6 +9,8 @@ $dbh = new sdbh();
     <link href="assets/css/style.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
             crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
 <div class="container">
@@ -60,7 +62,20 @@ $dbh = new sdbh();
                 <button type="submit" class="btn btn-primary">Рассчитать</button>
             </form>
 
-            <h5>Итоговая стоимость: <span id="total-price"></span></h5>
+            <div class="d-flex text-center">
+                <h5>Итоговая стоимость: <span id="total-price"></span></h5>
+                <button
+                    id="info-price"
+                    type="button"
+                    class="btn btn-link"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title=""
+                    hidden
+                >
+                    <i class="bi bi-question-circle"></i>
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -76,7 +91,12 @@ $dbh = new sdbh();
                 type: 'POST',
                 data: $(this).serialize(),
                 success: function(response) {
-                    $("#total-price").text(response);
+                    const data = JSON.parse(response);
+                    $("#total-price").text(data.total_sum);
+
+                    const infoTooltip = $("#info-price")
+                    infoTooltip.attr('title', data.calculation_info).tooltip('dispose').tooltip();
+                    infoTooltip.removeAttr('hidden');
                 },
                 error: function() {
                     $("#total-price").text('Ошибка при расчете');
@@ -84,6 +104,7 @@ $dbh = new sdbh();
             });
         });
     });
+
 </script>
 </body>
 </html>

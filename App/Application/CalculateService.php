@@ -12,8 +12,6 @@ class CalculateService
 
     private array $selected_services;
 
-    private float $total_value;
-
     public function __construct(ProductEntity $product, int $days, array $selected_services)
     {
         $this->product = $product;
@@ -23,12 +21,10 @@ class CalculateService
 
     public function calculate() : float
     {
-        $this->calculate_price();
-        $this->calculate_service();
-        return $this->total_value;
+        return $this->calculate_price() + $this->calculate_service();
     }
 
-    private function calculate_price() : void
+    public function calculate_price() : float
     {
         $price = $this->product->get_price();
 
@@ -36,23 +32,25 @@ class CalculateService
             $price = $this->find_tarif();
         }
 
-        $this->total_value = $price * $this->days;
+        return $price * $this->days;
     }
 
-    private function calculate_service()
+    public function calculate_service() : float
     {
-        $services_price = 0;
-        foreach ($this->selected_services as $service) {
-            $services_price += (float)$service * $this->days;
-        }
-
-        $this->total_value += $services_price;
+        return $this->sum_price_selected_services() * $this->days;
     }
 
-    private function find_tarif() : int
+    public function sum_price_selected_services() : float
+    {
+        return array_sum($this->selected_services);
+    }
+
+    public function find_tarif() : int
     {
         $tarifs = $this->product->get_tarifs();
+
         ksort($tarifs);
+
         $tarifs = array_filter($tarifs, function ($price, $day_count) {
             return $this->days >= $day_count;
         }, ARRAY_FILTER_USE_BOTH);

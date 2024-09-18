@@ -38,10 +38,11 @@ class Calculate
             return;
         }
 
-        $total_sum = (new CalculateService($product, (int) $days, $selected_services))->calculate();
+        $calculate_instance = new CalculateService($product, (int) $days, $selected_services);
 
         $this->calculatePresenter
-            ->set_total_sum($total_sum)
+            ->set_total_sum($calculate_instance->calculate())
+            ->set_info($days, $calculate_instance->find_tarif(), $calculate_instance->sum_price_selected_services())
             ->present();
     }
 }
