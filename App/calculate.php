@@ -29,11 +29,11 @@ class Calculate
         $product_id = $request['product'] ?? 0;
         $selected_services = $request['services'] ?? [];
 
-        $product = $this->productRepository->find_product_by_id($product_id);
+        $product = $this->productRepository->findProductById($product_id);
 
         if (!$product) {
             $this->calculatePresenter
-                ->set_error('Ошибка, товар не найден!')
+                ->setError('Ошибка, товар не найден!')
                 ->present();
             return;
         }
@@ -41,8 +41,8 @@ class Calculate
         $calculate_instance = new CalculateService($product, (int) $days, $selected_services);
 
         $this->calculatePresenter
-            ->set_total_sum($calculate_instance->calculate())
-            ->set_info($days, $calculate_instance->find_tarif(), $calculate_instance->sum_price_selected_services())
+            ->setTotalSum($calculate_instance->calculate())
+            ->setInfo($days, $calculate_instance->findTarif(), $calculate_instance->sum_price_selected_services())
             ->present();
     }
 }

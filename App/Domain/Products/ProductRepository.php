@@ -16,7 +16,7 @@ class ProductRepository
         $this->dbh = new Sdbh();
     }
 
-    public function find_product_by_id($productId) : ?ProductEntity
+    public function findProductById($productId) : ?ProductEntity
     {
         $array = $this->dbh->make_query("SELECT * FROM a25_products WHERE (ID = $productId) LIMIT 1");
 

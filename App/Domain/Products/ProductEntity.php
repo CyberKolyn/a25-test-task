@@ -21,22 +21,22 @@ class ProductEntity
         $this->tarifs = $product["TARIFF"];
     }
 
-    public function get_id(): int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function get_name(): string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function get_price(): float
+    public function getPrice(): float
     {
         return $this->price;
     }
 
-    public function get_tarifs(): array
+    public function getTarifs(): array
     {
         return $this->tarifs ? unserialize($this->tarifs) : [];
     }
