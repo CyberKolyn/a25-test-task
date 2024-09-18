@@ -1,6 +1,12 @@
 <?php
-require_once 'App/Infrastructure/sdbh.php'; use sdbh\sdbh;
-$dbh = new sdbh();
+require_once 'App/Domain/Products/ProductRepository.php';
+require_once 'App/Domain/Settings/SettingRepository.php';
+
+use App\Domain\Products\ProductRepository;
+use App\Domain\Settings\SettingRepository;
+
+$productRepository = new ProductRepository();
+$settingRepository = new SettingRepository();
 ?>
 <html>
 <head>
@@ -28,16 +34,12 @@ $dbh = new sdbh();
         <div class="col-12">
             <form action="App/calculate.php" method="POST" id="form">
 
-                <?php $products = $dbh->make_query('SELECT * FROM a25_products');
+                <?php $products = $productRepository->productAll();
                 if (is_array($products)) { ?>
                     <label class="form-label" for="product">Выберите продукт:</label>
                     <select class="form-select" name="product" id="product">
-                        <?php foreach ($products as $product) {
-                            $name = $product['NAME'];
-                            $price = $product['PRICE'];
-                            $tarif = $product['TARIFF'];
-                            ?>
-                            <option value="<?= $product['ID']; ?>"><?= $name; ?></option>
+                        <?php foreach ($products as $product) {?>
+                            <option value="<?= $product->getId(); ?>"><?= $product->getName(); ?></option>
                         <?php } ?>
                     </select>
                 <?php } ?>
@@ -48,8 +50,9 @@ $dbh = new sdbh();
                 <label class="form-label" for="endDate">Конец проката</label>
                 <input type="text" class="form-control" name="endDate" id="endDate" autocomplete="off">
 
-                <?php $services = unserialize($dbh->mselect_rows('a25_settings', ['set_key' => 'services'], 0, 1, 'id')[0]['set_value']);
-                if (is_array($services)) {
+                <?php $settingServices = $settingRepository->findSettingServices();
+                if ($settingServices) {
+                    $services = $settingServices->getValue();
                     ?>
                     <label for="customRange1" class="form-label">Дополнительно:</label>
                     <?php
@@ -98,7 +101,6 @@ $dbh = new sdbh();
                 type: 'POST',
                 data: $(this).serialize(),
                 success: function(response) {
-                    console.log(response)
                     const data = JSON.parse(response);
                     $("#total-price").text(data.total_sum);
 

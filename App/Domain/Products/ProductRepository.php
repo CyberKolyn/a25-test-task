@@ -2,23 +2,32 @@
 
 namespace App\Domain\Products;
 
-use sdbh\sdbh;
+use App\Domain\Repository;
 
-require_once __DIR__ . '/../../Infrastructure/sdbh.php';
-require_once __DIR__ . '/ProductEntity.php';
+require_once 'ProductEntity.php';
+require_once __DIR__ . '/../Repository.php';
 
-class ProductRepository
+class ProductRepository extends Repository
 {
-    private Sdbh $dbh;
-
-    public function __construct()
+    public function productAll(int $limit = 25) : ?array
     {
-        $this->dbh = new Sdbh();
+        $products = $this->DB->rawQuery("SELECT * FROM a25_products LIMIT $limit");
+
+        if (!$products) {
+            return null;
+        }
+
+        return array_map(
+            function (array $product) {
+                return new ProductEntity($product);
+            },
+            $products
+        );
     }
 
     public function findProductById($productId) : ?ProductEntity
     {
-        $array = $this->dbh->make_query("SELECT * FROM a25_products WHERE (ID = $productId) LIMIT 1");
+        $array = $this->DB->rawQuery("SELECT * FROM a25_products WHERE (ID = $productId) LIMIT 1");
 
         if (!$array) {
             return null;
