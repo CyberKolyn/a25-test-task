@@ -11,6 +11,9 @@ $dbh = new sdbh();
             crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
 </head>
 <body>
 <div class="container">
@@ -39,8 +42,11 @@ $dbh = new sdbh();
                     </select>
                 <?php } ?>
 
-                <label for="customRange1" class="form-label" id="count">Количество дней:</label>
-                <input type="number" name="days" class="form-control" id="customRange1" min="1" max="30">
+                <label class="form-label" for="startDate">Начало проката</label>
+                <input type="text" class="form-control" name="startDate" id="startDate" autocomplete="off">
+
+                <label class="form-label" for="endDate">Конец проката</label>
+                <input type="text" class="form-control" name="endDate" id="endDate" autocomplete="off">
 
                 <?php $services = unserialize($dbh->mselect_rows('a25_settings', ['set_key' => 'services'], 0, 1, 'id')[0]['set_value']);
                 if (is_array($services)) {
@@ -81,6 +87,7 @@ $dbh = new sdbh();
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
 <script>
     $(document).ready(function() {
         $("#form").submit(function(event) {
@@ -91,6 +98,7 @@ $dbh = new sdbh();
                 type: 'POST',
                 data: $(this).serialize(),
                 success: function(response) {
+                    console.log(response)
                     const data = JSON.parse(response);
                     $("#total-price").text(data.total_sum);
 
@@ -103,6 +111,13 @@ $dbh = new sdbh();
                 }
             });
         });
+
+        const options = {
+            dateFormat: "dd.mm.yy",
+        };
+
+        $("#startDate").datepicker(options);
+        $("#endDate").datepicker(options);
     });
 
 </script>

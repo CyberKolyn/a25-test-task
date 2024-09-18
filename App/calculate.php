@@ -10,6 +10,12 @@ require_once 'Presentation/Products/CalculatePresenter.php';
 require_once 'Presentation/IPresenter.php';
 require_once 'Application/CalculateService.php';
 
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $instance = new Calculate();
+    $instance->calculate($_POST);
+}
+
 class Calculate
 {
     private ProductRepository $productRepository;
@@ -24,8 +30,7 @@ class Calculate
 
     public function calculate($request)
     {
-
-        $days = $request['days'] ?? 0;
+        $days = $this->getDays($request['startDate'] ?? 0, $request['endDate'] ?? 0);
         $product_id = $request['product'] ?? 0;
         $selected_services = $request['services'] ?? [];
 
@@ -45,9 +50,25 @@ class Calculate
             ->setInfo($days, $calculate_instance->findTarif(), $calculate_instance->sum_price_selected_services())
             ->present();
     }
-}
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $instance = new Calculate();
-    $instance->calculate($_POST);
+    private function getDays($startDate, $endDate): int
+    {
+        $startDate = strtotime(trim($startDate));
+        $endDate = strtotime(trim($endDate));
+
+        if (!$startDate || !$endDate) {
+            return 0;
+        }
+
+        $startDate = date_create('@'.$startDate);
+        $endDate = date_create('@'.$endDate);
+
+        if ($startDate > $endDate) {
+            return 0;
+        }
+
+        $interval = date_diff($startDate, $endDate);
+
+        return $interval->days + 1;
+    }
 }
